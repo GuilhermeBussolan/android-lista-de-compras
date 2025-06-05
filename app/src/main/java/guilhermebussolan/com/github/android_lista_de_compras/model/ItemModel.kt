@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
  * A classe é uma data class do Kotlin, o que significa que ela gera automaticamente métodos úteis, como equals(), hashCode() e toString().
  *
  * @author Ewerton Carreira
- * @version 1.0
+ * @version 1.1 // Versão atualizada para refletir as novas colunas
  * @since 2023-03-01
  */
 @Entity // Anotação que indica que esta classe é uma entidade, ou seja, uma tabela no banco de dados.
@@ -28,5 +28,15 @@ data class ItemModel(
      * O nome do item. Este campo será preenchido pelo usuário.
      * Não há anotações especiais neste campo, então ele será uma coluna regular na tabela.
      */
-    val name: String
+    val name: String,
+
+    /**
+     * O preço do item.
+     */
+    val price: Double, // Novo campo para o preço
+
+    /**
+     * Uma descrição opcional do item. Pode ser nula.
+     */
+    val description: String? = null // Novo campo para a descrição, opcional
 )

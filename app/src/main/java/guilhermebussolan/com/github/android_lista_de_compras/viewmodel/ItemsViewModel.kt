@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
  * A classe também fornece métodos para adicionar e remover itens.
  *
  * @author Ewerton Carreira
- * @version 1.0
+ * @version 1.1 // Versão atualizada para refletir as novas colunas
  * @since 2023-03-01
  */
 class ItemsViewModel(application: Application) : AndroidViewModel(application) {
@@ -37,7 +37,10 @@ class ItemsViewModel(application: Application) : AndroidViewModel(application) {
             getApplication(),
             ItemDatabase::class.java,
             "items_database"
-        ).build()
+
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
         // Obtém uma referência para o DAO chamando database.itemDao().
         // Esta referência será usada para acessar o banco de dados.
@@ -48,18 +51,20 @@ class ItemsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Método para adicionar um novo item.
+     * Método para adicionar um novo item com nome, preço e descrição.
      * Este método é chamado na thread IO, pois pode levar algum tempo para inserir o item no banco de dados.
-     * @param item O nome do novo item.
+     * @param name O nome do novo item.
+     * @param price O preço do novo item.
+     * @param description A descrição opcional do novo item.
      */
-    fun addItem(item: String) {
+    fun addItem(name: String, price: Double, description: String?) { // Modificado para aceitar preço e descrição
         // Inicia uma nova corrotina no escopo do ViewModel. As corrotinas são leves e não
         // bloqueiam a thread principal.
         // O Dispatcher.IO é usado para executar a corrotina em uma thread que é otimizada para
         // operações de E/S, como acesso ao banco de dados.
         viewModelScope.launch(Dispatchers.IO) {
-            // Cria um novo ItemModel com o nome fornecido.
-            val newItem = ItemModel(name = item)
+            // Cria um novo ItemModel com o nome, preço e descrição fornecidos.
+            val newItem = ItemModel(name = name, price = price, description = description) // Modificado para criar o ItemModel completo
             // Insere o novo item no banco de dados. Como esta operação pode levar algum tempo,
             // ela é executada em uma corrotina para evitar bloquear a thread principal.
             itemDao.insert(newItem)

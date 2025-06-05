@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import guilhermebussolan.com.github.android_lista_de_compras.R
 import guilhermebussolan.com.github.android_lista_de_compras.model.ItemModel
+import java.text.NumberFormat // Importe para formatar o preço
+import java.util.Locale // Importe para definir o locale da formatação
 
 class ItemsAdapter(private val onItemRemoved: (ItemModel) -> Unit) :
     RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
@@ -19,13 +21,17 @@ class ItemsAdapter(private val onItemRemoved: (ItemModel) -> Unit) :
      * Uma classe interna ViewHolder que estende RecyclerView.ViewHolder.
      * Esta classe é responsável por manter as referências para as views de cada item e preencher os dados.
      *
-     * @property textView Referência para a view TextView de cada item.
+     * @property textView Referência para a view TextView do nome do item.
+     * @property priceTextView Referência para a view TextView do preço do item. // Novo
+     * @property descriptionTextView Referência para a view TextView da descrição do item. // Novo
      * @property button Referência para a view ImageButton de cada item.
      */
     inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         // Referências para as views de cada item.
         val textView = view.findViewById<TextView>(R.id.textViewItem)
+        val priceTextView = view.findViewById<TextView>(R.id.textViewPrice) // Novo: Adicione o ID do TextView do preço
+        val descriptionTextView = view.findViewById<TextView>(R.id.textViewDescription) // Novo: Adicione o ID do TextView da descrição
         val button = view.findViewById<ImageButton>(R.id.imageButton)
 
         /**
@@ -35,6 +41,20 @@ class ItemsAdapter(private val onItemRemoved: (ItemModel) -> Unit) :
         fun bind(item: ItemModel) {
             // Define o texto do TextView para o nome do item.
             textView.text = item.name
+
+            // Formata e define o texto do TextView para o preço do item.
+            val format = NumberFormat.getCurrencyInstance(Locale("pt", "BR")) // Formato de moeda para Real Brasileiro
+            priceTextView.text = format.format(item.price)
+
+            // Define o texto do TextView para a descrição do item.
+            // Se a descrição for nula, o TextView ficará oculto ou vazio.
+            if (item.description.isNullOrEmpty()) {
+                descriptionTextView.visibility = View.GONE // Oculta se não houver descrição
+            } else {
+                descriptionTextView.visibility = View.VISIBLE
+                descriptionTextView.text = item.description
+            }
+
             // Define um listener para o botão, que chama o callback onItemRemoved quando clicado
             button.setOnClickListener {
                 onItemRemoved(item)
@@ -53,7 +73,7 @@ class ItemsAdapter(private val onItemRemoved: (ItemModel) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         // Infla o layout do item.
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_layout, parent, false)
+            .inflate(R.layout.item_layout, parent, false) // Note que está usando R.layout.item_layout
         // Cria e retorna um novo ViewHolder.
         return ItemViewHolder(view)
     }

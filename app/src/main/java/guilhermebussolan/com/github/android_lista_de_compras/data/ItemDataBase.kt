@@ -14,7 +14,7 @@ import guilhermebussolan.com.github.android_lista_de_compras.model.ItemModel
  * @version 1.0
  * @since 2023-03-01
  */
-@Database(entities = [ItemModel::class], version = 1)
+@Database(entities = [ItemModel::class], version = 3)
 abstract class ItemDatabase : RoomDatabase() {
 
     /**
